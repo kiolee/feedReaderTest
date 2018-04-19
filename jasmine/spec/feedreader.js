@@ -41,13 +41,19 @@ $(function() {
 	
 	describe('check allFeeds', function(){
 		
-			it('name and url are defined', function(){
+			it('name is not null', function(){
 				for (let feed of allFeeds){
 					expect(feed).toBeDefined();
 					expect(feed.name).toBeDefined();
+					expect(feed.name.length).toBeGreaterThan(0);
+				}
+			});
+			
+			it('url is not null', function(){
+				for (let feed of allFeeds){
+					expect(feed).toBeDefined();
 					expect(feed.url).toBeDefined();
-					expect(feed.name.length).not.toBe(0);
-					expect(feed.url.length).not.toBe(0);
+					expect(feed.url.length).toBeGreaterThan(0);
 				}
 			});
 		
@@ -55,16 +61,16 @@ $(function() {
 	
 	describe('The menu', function(){
 		it('menu is hide default', function(){
-			expect(document.getElementsByClassName('menu-hidden')[0]).toBeDefined();
+			expect($('body').hasClass('menu-hidden')).toBe(true);
 		});
 	});
 
 	describe('icon click', function(){
 		it('is control menu show / hide', function(){
 			$('.menu-icon-link').trigger('click');
-			expect($('body').hasClass('menu-hidden')).toBeFalsy();
+			expect($('body').hasClass('menu-hidden')).toBe(false);
 			$('.menu-icon-link').trigger('click');
-			expect($('body').hasClass('menu-hidden')).toBeTruthy();
+			expect($('body').hasClass('menu-hidden')).toBe(true);
 		});
 	});
 	
@@ -73,31 +79,30 @@ $(function() {
 		beforeEach(function(done){
 			loadFeed(0, done);
 		});
-		it('success', function(done){
-			expect($('.feed .entry').length>0).toBeTruthy();
+		it('success', function(){
+			expect($('.feed .entry').length).toBeGreaterThan(0);
 			console.log('Initial Entries');
-			done();
 		});
 	});
 	
 	describe('New Feed Selection', function(){
 		var content1, content2;
+		beforeEach(function(done){
+			loadFeed(1, function(){
+				content1=$('.feed').html();
+				expect(content1.length).toBeGreaterThan(0);
+				loadFeed(2, function(){
+					content2=$('.feed').html();
+					expect(content2.length).toBeGreaterThan(0);
+					done();
+				});
+			});
+		});
 
-		it('current has content', function(done){
-			content1=$('.feed').html();
-			console.log('c1'+content1);
-			expect(content1.length>0).toBeTruthy();
-			$('.feed').empty();
-			loadFeed(1, done);
+		it('list has changed', function(){
+			expect(content1).not.toBe(content2);
 		});
 		
-		it('content is change', function(done){
-			content2=$('.feed').html();
-			console.log('c2'+content2);
-			expect(content2.length>0).toBeTruthy();
-			expect(content1!==content2).toBeTruthy();
-			done();
-		});
 		
 	});
 	
